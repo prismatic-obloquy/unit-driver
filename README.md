@@ -66,3 +66,7 @@ Suite MyThing_get_number:
 ```
 
 And all you had to do was download the `.h`, then `#include` it.
+
+For more details on its use, check out Unit Driver's [website] or the `docs/` folder in this repository.
+
+  [website]: unit-driver.prismatic.obloquy.work
