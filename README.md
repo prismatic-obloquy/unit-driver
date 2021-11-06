@@ -116,3 +116,13 @@ After all, they'll change semi-regularly anyway.
 
 That said, the `UD_` and `UDA_` exports are changed as little as possible, to keep porting minimal.
 `_UD_` can change whenever is convenient, which is part of why you shouldn't use it.
+
+## Contributing
+
+It's great that you want to contribute!
+I'm not really sure how to accept that yet, though -- unlike Chattor I don't really want to invest the effort into making this a Proper Open-Source Project.
+Raise an issue or file a pull request, as normal.
+
+Alternatively, you could help by writing documentation.
+Write up an introductory blogpost, cover some niche use case, etc.
+If I like it, I'll link it from this README.
