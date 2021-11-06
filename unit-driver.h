@@ -6,6 +6,9 @@
 | remove tests, see all-tests.c. To change them, look for the relevant call |
 | to UD_SUITE and UD_TEST, then edit the functions that those use. Don't    |
 | edit this file unless you know what you're doing.                         |
+|                                                                           |
+| See github.com/prismatic-obloquy/unit-driver/blob/release/README.md#usage |
+| for usage information and guidance.                                       |
 +---------------------------------------------------------------------------+
 | Source and docs at https://github.com/prismatic-obloquy/unit-driver       |
 +---------------------------------------------------------------------------+
