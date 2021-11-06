@@ -127,7 +127,7 @@ static _UD_registry _UD_reg = {
 };
 
 _UD_suite* _UD_add_suite(const char* name, UD_init_f init, UD_clean_f clean) {
-    if (init == NULL ^ clean == NULL) {
+    if ((init == NULL) ^ (clean == NULL)) {
         // either init is null or clean is null but not both
         return NULL;
     }
