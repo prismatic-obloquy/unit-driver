@@ -49,6 +49,10 @@
 #   define UD_THREAD_COUNT 0
 #endif
 
+#ifndef UD_OUTPUT_FORMAT
+#   define UD_OUTPUT_FORMAT 'p'  // plaintext by default
+#endif
+
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -378,18 +382,39 @@ int main(int argc, char** argv) {
             failSuites++;
         }
     }
-    int passTests = totalTests - failTests;
 
+#if UD_OUTPUT_FORMAT == 'p'
+    int passTests = totalTests - failTests;
     printf("Passed %.01f%% of %d tests across %d suites.\n",
             100.0 * passTests / totalTests,
             totalTests, totalSuites);
+#elif UD_OUTPUT_FORMAT == 'j'
+    int passSuites = totalSuites - failSuites;
+    int passTests = totalTests - failTests;
+    int passAsserts = totalAsserts - failAsserts;
+    printf("{"
+        "\"suites\":{\"passed\":%d,\"total\":%d},"
+        "\"tests\":{\"passed\":%d,\"total\":%d},"
+        "\"asserts\":{\"passed\":%d,\"total\":%d},"
+        "\"details\":[",
+        passSuites, totalSuites,
+        passTests, totalTests,
+        passAsserts, totalAsserts
+    );
+    bool firstEntry = true;
+#endif
 
     // Then we loop through again to print specific failure details.
     _UD_L_FOREACH((&_UD_reg), suites, _UD_suite, s) {
+#if UD_OUTPUT_FORMAT == 'p'
         bool suiteHead = false;
+#endif
         _UD_L_FOREACH(s, tests, _UD_test, t) {
+#if UD_OUTPUT_FORMAT == 'p'
             bool testHead = false;
+#endif
             _UD_L_FOREACH(t, asserts, _UD_assert, a) {
+#if UD_OUTPUT_FORMAT == 'p'
                 if (!suiteHead) {
                     printf("Suite %s:\n", s->name);
                     suiteHead = true;
@@ -400,9 +425,25 @@ int main(int argc, char** argv) {
                 }
                 printf("    Assert failed: %s\n", a->text);
                 printf("      (at %s)\n", a->location);
+#elif UD_OUTPUT_FORMAT == 'j'
+                printf("%s{"
+                        "\"suite\":\"%s\","
+                        "\"test\":\"%s\","
+                        "\"location\":\"%s\","
+                        "\"message\":\"%s\""
+                    "}",
+                    firstEntry ? "" : ",",
+                    s->name, t->name, a->location, a->text
+                );
+                firstEntry = false;
+#endif
             }
         }
     }
+
+#if UD_OUTPUT_FORMAT == 'j'
+    puts("]}");
+#endif
 
     _UD_free_suites();
 
@@ -442,11 +483,21 @@ int main(int argc, char** argv) {
 #define UDA_FAIL(message) \
     _UD_add_assert(_UD_current_test, _UD_LOCATION, #message)
 
-#define UDA_TRUE(cond) do { \
-    if (!(cond)) { _UD_add_assert(_UD_current_test, _UD_LOCATION, #cond); } \
+#define UDA_CHECK(cond, message) do { \
+    if (!(cond)) { UDA_FAIL(message); } \
 } while(0)
 
-#define UDA_EQUAL(lhs, rhs) UDA_TRUE(lhs == rhs)
-#define UDA_NOT_EQUAL(lhs, rhs) UDA_TRUE(lhs != rhs)
+#define UDA_TRUE(cond) do { \
+    if (!(cond)) { UDA_FAIL(#cond); } \
+} while(0)
+#define UDA_FALSE(cond) UDA_CHECK(!(cond), !cond)
+
+#define UDA_EQ(lhs, rhs) UDA_CHECK((lhs) == (rhs), lhs == rhs)
+#define UDA_NE(lhs, rhs) UDA_CHECK((lhs) != (rhs), lhs != rhs)
+#define UDA_GT(lhs, rhs) UDA_CHECK((lhs) > (rhs), lhs > rhs);
+#define UDA_LT(lhs, rhs) UDA_CHECK((lhs) < (rhs), lhs < rhs);
+#define UDA_GE(lhs, rhs) UDA_CHECK((lhs) >= (rhs), lhs >= rhs);
+#define UDA_LE(lhs, rhs) UDA_CHECK((lhs) >= (rhs), lhs >= rhs);
+#define UDA_STREQ(lhs, rhs) UDA_CHECK()
 
 #endif
