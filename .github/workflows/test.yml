@@ -1,0 +1,29 @@
+# Very nearly actions/starter-workflows' cmake.yml, but with a build matrix
+
+name: Automatic Tests
+on:
+  push:
+    branches: [ release, staging, feature/* ]
+    tags: '*'
+  pull_request:
+    branches: [ release, staging, feature/* ]
+jobs:
+  build-main:
+    strategy:
+      matrix:
+        config: [ "-O3 -s", "-Os -s", "-O0 -g" ]
+        compiler: [ "gcc", "clang" ]
+        example:
+          - simple
+          - simple-json
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install prereqs
+      run: sudo apt install valgrind clang
+    - name: Build
+      run: clang -Wall -Wextra -Werror ${{matrix.config}} -I. examples/${{matrix.example}}.c examples/lib.c -o example
+    - name: Run
+      run: ./example >output
+    - name: Compare
+      run: diff output ./examples/${{matrix.example}}.expected.txt
