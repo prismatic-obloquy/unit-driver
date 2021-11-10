@@ -18,10 +18,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build
       working-directory: ${{github.workspace}}
-      run: ${{matrix.compiler}} -Wall -Wextra -Werror ${{matrix.config}} -I. examples/${{matrix.example}}.c examples/lib.c -o example
+      run: ${{matrix.compiler}} -Wall -Wextra -Werror ${{matrix.config}} -I. example/${{matrix.example}}.c example/lib.c -o example
     - name: Run
       working-directory: ${{github.workspace}}
       run: ./example >output
     - name: Compare
       working-directory: ${{github.workspace}}
-      run: diff output examples/${{matrix.example}}.expected.txt
+      run: diff output example/${{matrix.example}}.expected.txt
