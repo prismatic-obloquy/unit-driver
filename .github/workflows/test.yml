@@ -2,11 +2,8 @@
 
 name: Automatic Tests
 on:
-  push:
-    branches: [ release, staging, feature/* ]
-    tags: '*'
-  pull_request:
-    branches: [ release, staging, feature/* ]
+  - push
+  - pull_request
 jobs:
   build-main:
     strategy:
@@ -20,8 +17,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: gcc -Wall -Wextra -Werror ${{matrix.config}} -I. ${{github.workspace}}/examples/${{matrix.example}}.c ${{github.workspace}}/examples/lib.c -o example
+      run: ${{matrix.compiler}} -Wall -Wextra -Werror ${{matrix.config}} -I. examples/${{matrix.example}}.c examples/lib.c -o example
     - name: Run
       run: ./example >output
     - name: Compare
-      run: diff output ${{github.workspace}}/examples/${{matrix.example}}.expected.txt
+      run: diff output examples/${{matrix.example}}.expected.txt
