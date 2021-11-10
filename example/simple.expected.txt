@@ -1,5 +1,5 @@
 Passed 50.0% of 2 tests across 1 suites.
 Suite add1:
   Test add1_1_ne_3:
-    Assert failed: "result != 2"
+    Assert failed: result != 2
       (at example/simple.c:15)
