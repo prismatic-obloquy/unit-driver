@@ -22,6 +22,7 @@ jobs:
     - name: Run
       working-directory: ${{github.workspace}}
       run: ./bin >output
+      continue-on-error: true
     - name: Compare
       working-directory: ${{github.workspace}}
       run: diff output example/${{matrix.example}}.expected.txt
