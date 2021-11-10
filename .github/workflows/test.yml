@@ -19,11 +19,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Install prereqs
-      run: sudo apt install valgrind clang
     - name: Build
-      run: clang -Wall -Wextra -Werror ${{matrix.config}} -I. examples/${{matrix.example}}.c examples/lib.c -o example
+      run: gcc -Wall -Wextra -Werror ${{matrix.config}} -I. ${{github.workspace}}/examples/${{matrix.example}}.c ${{github.workspace}}/examples/lib.c -o example
     - name: Run
       run: ./example >output
     - name: Compare
-      run: diff output ./examples/${{matrix.example}}.expected.txt
+      run: diff output ${{github.workspace}}/examples/${{matrix.example}}.expected.txt
